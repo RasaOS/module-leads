@@ -1,0 +1,63 @@
+# Leads
+
+> This file is yours (project-owned). It is the live pipeline board.
+> `/lead` captures + advances leads; `/leads` renders the board; `/qualify`
+> scores against the gate. Read it top-to-bottom as a funnel. Format
+> reference: `.claude/leads-rules.md`. The stages below are the default —
+> your real stages live in `.claude/leads-gate.md`.
+
+One entry per lead. Group by stage so the board reads as a funnel. Terminal
+leads (`won`/`lost`) stay here — a lost lead is data. `id` is `LEAD-NNN`
+monotonic, never reused. Dates absolute. `account` is the shared
+`@acct-<slug>` handle that joins to every sibling business-ops module.
+
+---
+
+## 🟢 Active
+
+### LEAD-001 — Acme Corp
+- **account:** `@acct-acme`
+- **contact_name:** Dana Reyes
+- **company:** Acme Corp
+- **source:** referral
+- **stage:** qualified
+- **value:** $24,000 USD (est.)
+- **owner:** you
+- **next_action:** send proposal
+- **next_action_date:** 2026-07-12
+- **created:** 2026-07-05
+- **notes:** Referred by an existing customer. Budget + decision-maker
+  confirmed → cleared the gate's qualification bar.
+
+### LEAD-002 — Northwind Trading
+- **account:** `@acct-northwind`
+- **contact_name:** Sam Okafor
+- **company:** Northwind Trading
+- **source:** inbound
+- **stage:** contacted
+- **value:** $8,000 USD (est.)
+- **owner:** you
+- **next_action:** discovery call
+- **next_action_date:** 2026-07-08
+- **created:** 2026-07-05
+- **notes:** Came in via the site form. Fit not yet assessed.
+
+---
+
+## ✅ Won / ❌ Lost
+
+<!--
+Closed leads land here, newest first. Keep them — a lost lead's reason is
+the most useful thing in the ledger. A won lead hands off (if mounted) to
+rasa.module.contracts (a contract) and rasa.module.field-log (a kickoff
+visit) on the same account handle. Example:
+
+### LEAD-000 — Example Co  ·  ❌ lost
+- **account:** `@acct-example`
+- **stage:** lost
+- **value:** $5,000 USD (est.)
+- **created:** 2026-06-01
+- **notes:** Lost on price to an incumbent. Revisit at renewal.
+-->
+
+<!-- Delete the two example leads above once you capture your first real lead. -->

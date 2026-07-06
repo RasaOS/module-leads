@@ -1,0 +1,105 @@
+# Leads-Gate
+
+**This file is yours.** `rasa.module.leads` ships the portable pipeline
+(`.claude/leads-rules.md` + the `/lead` skills), but it deliberately does
+not decide the three things that vary per business:
+
+1. **Your pipeline stages** — the exact ordered stage list + entry/exit
+   criteria,
+2. **What "qualified" means** — the concrete bar a lead must clear, and
+3. **Your lead-source taxonomy** — the allowed `source` values.
+
+This file is where you define all three. `/qualify` reads it and hard-stops
+if the qualification bar is unset — guessing your "qualified" rule is the
+one inference the module refuses to make. Every stage advance checks the
+exit criteria here.
+
+Until you edit this, the honest defaults below apply. Running on the
+default is a smell, not a destination.
+
+---
+
+## Pipeline stages (EDIT THIS)
+
+> The default lifecycle from `leads-rules.md`. Replace with your real
+> stages. Each stage needs an **entry** rule (what must be true to move a
+> lead INTO it) and an **exit** rule (what must be true to leave it).
+
+- **new** — captured, not yet worked.
+  - exit: first outreach attempted.
+- **contacted** — a conversation has started.
+  - exit: fit/budget/need assessed (→ qualify).
+- **qualified** — cleared the qualification bar below.
+  - exit: a proposal / quote has been sent.
+- **proposal** — proposal out, terms in negotiation.
+  - exit: prospect says yes (→ won) or no (→ lost).
+- **won** — closed-won. Hand off to `rasa.module.contracts` (a contract)
+  and/or `rasa.module.field-log` (a kickoff visit) if mounted.
+- **lost** — closed-lost. Record why in the lead's `notes`. Terminal;
+  never deleted.
+
+---
+
+## What "qualified" means (EDIT THIS — REQUIRED)
+
+> `/qualify` hard-stops if this is unset. Define the concrete bar — each
+> item objectively answerable, not a feeling.
+
+A lead is **qualified** when ALL of the following are true:
+
+- [ ] **Budget** — the prospect has confirmed budget in range for `value`.
+- [ ] **Authority** — the decision-maker (or path to them) is identified.
+- [ ] **Need** — a specific, named need this offering addresses.
+- [ ] **Timeline** — a realistic close window exists (not "someday").
+
+> The classic BANT bar is the default. Swap in your own (MEDDIC, a simple
+> "budget + decision-maker confirmed", etc.).
+
+---
+
+## Lead-source taxonomy (EDIT THIS)
+
+> The allowed values for a lead's `source` field. Keep it short and real.
+
+- `referral`   — introduced by an existing customer or partner.
+- `inbound`    — came to us (form, call, walk-in).
+- `event`      — met at an event / conference / demo.
+- `outbound`   — we reached out cold.
+
+---
+
+## Examples — delete the ones you don't need
+
+> Pick the block that matches your business, paste it above, and tune it.
+
+### Simple 3-stage funnel
+
+```markdown
+Stages: lead → opportunity → closed (won|lost)
+Qualified: decision-maker confirmed AND budget in range.
+Sources: referral | inbound | outbound
+```
+
+### Long enterprise cycle
+
+```markdown
+Stages: new → contacted → discovery → qualified → proposal → negotiation → won|lost
+Qualified: full MEDDIC (Metrics, Economic buyer, Decision criteria,
+           Decision process, Identify pain, Champion).
+Sources: referral | inbound | event | outbound | partner | expansion
+```
+
+---
+
+## Note on co-mounted modules
+
+When a lead reaches **won**, the hand-offs below fire only if the sibling
+module is mounted — all soft, never a hard dependency:
+
+- `rasa.module.contracts` — the won deal becomes a signed contract (same
+  `@acct-<slug>` handle).
+- `rasa.module.field-log` — a kickoff visit / first field entry against the
+  same account.
+
+If neither is mounted, the lead still closes cleanly — it just sits at
+`won` in your ledger.
